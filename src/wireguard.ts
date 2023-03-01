@@ -20,9 +20,9 @@ export async function routes(fastify, options) {
     const command = `wg set ${iface} peer ${pubkey} remove`
     exec(command, (error, stdout, stderr) => {
       if (error || stderr) {
-        return reply.status(500).send({ error: error || stderr })
+        return reply.code(500).send({ error: error || stderr })
       }
-      reply.status(200).send({ message: "Peer removed" })
+      reply.code(200).send({ message: "Peer removed" })
     });
   });
   fastify.post("/:iface", async function (req, reply) {
@@ -31,9 +31,9 @@ export async function routes(fastify, options) {
     const command = `wg set ${iface} peer ${pubkey} allowed-ips ${allowedips}`
     exec(command, (error, stdout, stderr) => {
       if (error || stderr) {
-        return reply.status(500).send({ error: error || stderr })
+        return reply.code(500).send({ error: error || stderr })
       }
-      reply.status(201).send({ message: "Peer added" })
+      reply.code(201).send({ message: "Peer added" })
     });
   });
   fastify.get("/:iface/ips", async function (req, reply) {
@@ -41,9 +41,9 @@ export async function routes(fastify, options) {
     const command = `wg show ${iface} allowed-ips`
     exec(command, (error, stdout, stderr) => {
       if (error || stderr) {
-        return reply.status(500).send({ error: error || stderr })
+        return reply.code(500).send({ error: error || stderr })
       }
-      if (!stdout) return reply.status(204).send({ peers: [] })
+      if (!stdout) return reply.code(204).send({ peers: [] })
 
       const peers = stdout
       .split("\n")
@@ -53,7 +53,7 @@ export async function routes(fastify, options) {
         const ips = allowedips.split(" ")
         return { pubkey, allowedips: ips }
       })
-      reply.status(200).send({ peers })
+      return reply.code(200).send({ peers })
     });
   });
   fastify.get("/:iface/handshake", async function (req, reply) {
@@ -61,9 +61,9 @@ export async function routes(fastify, options) {
     const command = `wg show ${iface} latest-handshakes`
     exec(command, (error, stdout, stderr) => {
       if (error || stderr) {
-        return reply.status(500).send({ error: error || stderr })
+        return reply.code(500).send({ error: error || stderr })
       }
-      if (!stdout) return reply.status(204).send({ peers: [] })
+      if (!stdout) return reply.code(204).send({ peers: [] })
       const peers = stdout
       .split("\n")
       .filter(peer => peer.length)
@@ -71,7 +71,7 @@ export async function routes(fastify, options) {
         const [pubkey, handshake] = peer.split("\t")
         return { pubkey, latestHandshake: handshake }
       })
-      reply.status(200).send({ peers })
+      return reply.code(200).send({ peers })
     });
   });
 }
