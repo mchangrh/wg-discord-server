@@ -2,14 +2,16 @@ import { exec } from "child_process";
 import { auth, allowed_ifaces } from "./config.json"
 
 function os_func() {
-  this.execCommand = function(cmd, callback) {
-    exec(cmd, (error, stdout, stderr) => {
-      if (error) {
-        console.error(`exec error: ${error}`);
-        return;
-      }
-      callback(stdout);
-    });
+  this.execCommand = function (cmd: string) {
+    return new Promise((resolve, reject)=> {
+      exec(cmd, (error, stdout, stderr) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolve(stdout)
+      });
+    })
   }
 }
 var os = new os_func();
@@ -26,68 +28,68 @@ export async function routes(fastify, options) {
     } 
     done();
   });
-
+  
   fastify.delete("/:iface", async function (req, reply) {
     const { pubkey } = req.query
     const { iface } = req.params
     const command = `wg set ${iface} peer ${pubkey} remove`
     return await os.execCommand(command)
-      .then((stdout) => {
-        reply.code(200).send({ message: "Peer removed" })
-      })
-      .catch((error) => {
-        reply.code(500).send({ error: error })
-      });
+    .then((stdout) => {
+      reply.code(200).send({ message: "Peer removed" })
+    })
+    .catch((error) => {
+      reply.code(500).send({ error: error })
+    });
   });
   fastify.post("/:iface", async function (req, reply) {
     const { pubkey, allowedips } = req.body
     const { iface } = req.params
     const command = `wg set ${iface} peer ${pubkey} allowed-ips ${allowedips}`
     return await os.execCommand(command)
-      .then((stdout) => {
-        reply.code(201).send({ message: "Peer added" })
-      })
-      .catch((error) => {
-        reply.code(500).send({ error: error })
-      });
+    .then((stdout) => {
+      reply.code(201).send({ message: "Peer added" })
+    })
+    .catch((error) => {
+      reply.code(500).send({ error: error })
+    });
   });
   fastify.get("/:iface/ips", async function (req, reply) {
     const { iface } = req.params
     const command = `wg show ${iface} allowed-ips`
     return await os.execCommand(command)
-      .then((stdout) => {
-        if (!stdout) return reply.code(204).send({ peers: [] })
-        const peers = stdout
-        .split("\n")
-        .filter(peer => peer.length)
-        .map(peer => {
-          const [pubkey, allowedips] = peer.split("\t")
-          const ips = allowedips.split(" ")
-          return { pubkey, allowedips: ips }
-        })
-        return reply.code(200).send({ peers })
+    .then((stdout) => {
+      if (!stdout) return reply.code(204).send({ peers: [] })
+      const peers = stdout
+      .split("\n")
+      .filter(peer => peer.length)
+      .map(peer => {
+        const [pubkey, allowedips] = peer.split("\t")
+        const ips = allowedips.split(" ")
+        return { pubkey, allowedips: ips }
       })
-      .catch((error) => {
-        reply.code(500).send({ error: error })
-      });
+      return reply.code(200).send({ peers })
+    })
+    .catch((error) => {
+      reply.code(500).send({ error: error })
+    });
   });
   fastify.get("/:iface/handshake", async function (req, reply) {
     const { iface } = req.params
     const command = `wg show ${iface} latest-handshakes`
     return await os.execCommand(command)
-      .then((stdout) => {
-        if (!stdout) return reply.code(204).send({ peers: [] })
-        const peers = stdout
-        .split("\n")
-        .filter(peer => peer.length)
-        .map(peer => {
-          const [pubkey, handshake] = peer.split("\t")
-          return { pubkey, latestHandshake: handshake }
-        })
-        return reply.code(200).send({ peers })
+    .then((stdout) => {
+      if (!stdout) return reply.code(204).send({ peers: [] })
+      const peers = stdout
+      .split("\n")
+      .filter(peer => peer.length)
+      .map(peer => {
+        const [pubkey, handshake] = peer.split("\t")
+        return { pubkey, latestHandshake: handshake }
       })
-      .catch((error) => {
-        reply.code(500).send({ error: error })
-      });
+      return reply.code(200).send({ peers })
+    })
+    .catch((error) => {
+      reply.code(500).send({ error: error })
+    });
   });
 }
