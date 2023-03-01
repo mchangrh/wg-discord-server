@@ -28,7 +28,7 @@ export async function routes(fastify, options) {
   fastify.post("/:iface", async function (req, reply) {
     const { pubkey, allowedips } = req.body
     const { iface } = req.params
-    const command = `wg set ${iface} peer ${pubkey} allowed-ips ${allowedips}/32`
+    const command = `wg set ${iface} peer ${pubkey} allowed-ips ${allowedips}`
     exec(command, (error, stdout, stderr) => {
       if (error || stderr) {
         return reply.status(500).send({ error: error || stderr })
@@ -45,8 +45,9 @@ export async function routes(fastify, options) {
       }
       if (!stdout) return reply.status(204).send({ peers: [] })
       const peers = stdout.split("\n").map(peer => {
-        const [pubkey, allowedips] = peer.split("    ")
-        return { pubkey, allowedips: allowedips.split(" ") }
+        const [pubkey, allowedips] = peer.split("\t")
+        const ips = allowedips.split(" ")
+        return { pubkey, allowedips: ips }
       })
       reply.status(200).send({ peers })
     });
@@ -60,7 +61,7 @@ export async function routes(fastify, options) {
       }
       if (!stdout) return reply.status(204).send({ peers: [] })
       const peers = stdout.split("\n").map(peer => {
-        const [pubkey, handshake] = peer.split("    ")
+        const [pubkey, handshake] = peer.split("\t")
         return { pubkey, latestHandshake: handshake }
       })
       reply.status(200).send({ peers })
