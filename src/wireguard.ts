@@ -43,9 +43,9 @@ export async function routes(fastify, options) {
       if (error || stderr) {
         return reply.status(500).send({ error: error || stderr })
       }
-      if (!stdout.length) return reply.status(204).send({ peers: [] })
+      if (!stdout) return reply.status(204).send({ peers: [] })
       const peers = stdout.split("\n").map(peer => {
-        const [pubkey, allowedips] = peer.split("\t")
+        const [pubkey, allowedips] = peer.split("    ")
         return { pubkey, allowedips: allowedips.split(" ") }
       })
       reply.status(200).send({ peers })
@@ -58,9 +58,9 @@ export async function routes(fastify, options) {
       if (error || stderr) {
         return reply.status(500).send({ error: error || stderr })
       }
-      if (!stdout.length) return reply.status(204).send({ peers: [] })
+      if (!stdout) return reply.status(204).send({ peers: [] })
       const peers = stdout.split("\n").map(peer => {
-        const [pubkey, handshake] = peer.split("\t")
+        const [pubkey, handshake] = peer.split("    ")
         return { pubkey, latestHandshake: handshake }
       })
       reply.status(200).send({ peers })
