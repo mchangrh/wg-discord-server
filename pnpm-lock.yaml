@@ -2,7 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@types/node': ^18.14.2
-  fastify: '4'
+  fastify: ^4.11.0
 
 dependencies:
   '@types/node': 18.14.2

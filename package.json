@@ -4,7 +4,7 @@
   "main": "src/server.ts",
   "dependencies": {
     "@types/node": "^18.14.2",
-    "fastify": "4"
+    "fastify": "^4.11.0"
   },
   "scripts": {
     "start": "node src/server.js",
