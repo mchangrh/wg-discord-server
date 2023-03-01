@@ -26,9 +26,9 @@ export async function routes(fastify, options) {
     });
   });
   fastify.post("/:iface", async function (req, reply) {
-    const { pubkey, endpoint, allowedips } = req.query
+    const { pubkey, allowedips } = req.body
     const { iface } = req.params
-    const command = `wg set ${iface} peer ${pubkey} endpoint ${endpoint} allowed-ips ${allowedips}/32`
+    const command = `wg set ${iface} peer ${pubkey} allowed-ips ${allowedips}/32`
     exec(command, (error, stdout, stderr) => {
       if (error || stderr) {
         return reply.status(500).send({ error: error || stderr })

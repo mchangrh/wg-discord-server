@@ -4,7 +4,7 @@ import { routes as wireguard } from "./wireguard"
 
 const fastify = Fastify()
 
-fastify.register(wireguard, { prefix: "/wireguard" });
+fastify.register(wireguard, { prefix: "/wg" });
 
 fastify.get("*", (req, reply) => {
   reply.status(404).send();
