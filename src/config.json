@@ -1,0 +1,5 @@
+{
+  "port": 4005,
+  "allowed_ifaces": ["wg0"],
+  "auth": "y3p8f9sUS3LfwhUT4yXs"
+}

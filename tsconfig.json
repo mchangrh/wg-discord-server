@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "lib": ["es2020", "dom"],
+    "outDir": "./dist",
+    "resolveJsonModule": true
+  },
+}
