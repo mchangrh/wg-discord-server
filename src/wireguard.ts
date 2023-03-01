@@ -44,7 +44,11 @@ export async function routes(fastify, options) {
         return reply.status(500).send({ error: error || stderr })
       }
       if (!stdout) return reply.status(204).send({ peers: [] })
-      const peers = stdout.split("\n").map(peer => {
+
+      const peers = stdout
+      .split("\n")
+      .filter(peer => peer.length)
+      .map(peer => {
         const [pubkey, allowedips] = peer.split("\t")
         const ips = allowedips.split(" ")
         return { pubkey, allowedips: ips }
@@ -52,15 +56,18 @@ export async function routes(fastify, options) {
       reply.status(200).send({ peers })
     });
   });
-  fastify.get("/:iface/latestHandshake", async function (req, reply) {
+  fastify.get("/:iface/handshake", async function (req, reply) {
     const { iface } = req.params
-    const command = `wg show ${iface} allowed-ips`
+    const command = `wg show ${iface} latest-handshakes`
     exec(command, (error, stdout, stderr) => {
       if (error || stderr) {
         return reply.status(500).send({ error: error || stderr })
       }
       if (!stdout) return reply.status(204).send({ peers: [] })
-      const peers = stdout.split("\n").map(peer => {
+      const peers = stdout
+      .split("\n")
+      .filter(peer => peer.length)
+      .map(peer => {
         const [pubkey, handshake] = peer.split("\t")
         return { pubkey, latestHandshake: handshake }
       })
