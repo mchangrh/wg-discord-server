@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
     "noImplicitAny": false,
-    "target": "ES2020",
-    "lib": ["es2020"],
+    "target": "es6",
+    "module": "CommonJS",
+    "lib": ["es2020", "dom"],
     "outDir": "./dist",
     "moduleResolution": "node",
     "resolveJsonModule": true
