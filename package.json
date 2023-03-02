@@ -4,7 +4,9 @@
   "main": "src/server.ts",
   "dependencies": {
     "@types/node": "^18.14.2",
-    "fastify": "^4.11.0"
+    "@types/node-cron": "^3.0.7",
+    "fastify": "^4.11.0",
+    "node-cron": "^3.0.2"
   },
   "scripts": {
     "start": "node src/server.js",

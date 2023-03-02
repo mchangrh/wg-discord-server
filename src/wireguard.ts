@@ -1,7 +1,7 @@
 import { exec } from "child_process";
 import { auth, allowed_ifaces } from "./config.json"
 
-function os_func() {
+export function os_func() {
   this.execCommand = function (cmd: string) {
     return new Promise((resolve, reject)=> {
       exec(cmd, (error, stdout, stderr) => {
