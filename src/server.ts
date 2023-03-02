@@ -20,7 +20,6 @@ fastify.post("/config/:id", (req, reply) => {
 
 fastify.get("/config/:id", (req, reply) => {
   const { id } = req.params as any;
-  console.log(peers)
   if (peers.has(id)) {
     reply.status(200)
       .header("Content-Disposition", `attachment; filename="${id}-config.conf"`)
