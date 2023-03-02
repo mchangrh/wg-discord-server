@@ -9,6 +9,7 @@ export const flushPeers = async (iface: string, configs: Map<string, any>) => {
       stdout
         .split("\n")
         .filter(line => line.length)
+        .map(peer => peer.substring(0, 4))
     )
     .catch((error) => {
       console.error(error);
@@ -16,9 +17,10 @@ export const flushPeers = async (iface: string, configs: Map<string, any>) => {
   );
   // remove map entries not in wg interface
   for (const peer of configs.keys()) {
-    if (peers.includes(peer)) continue;
-    configs.delete(peer);
-    console.log("Flushed Peer: " + peer)
+    if (!peers.includes(peer)) {
+      configs.delete(peer);
+      console.log("Flushed Peer: " + peer)
+    }
   }
 
   for (const peer of peers) {
