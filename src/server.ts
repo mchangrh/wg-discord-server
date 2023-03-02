@@ -24,7 +24,7 @@ fastify.get("/config/:id", (req, reply) => {
   if (peers.has(id)) {
     reply.status(200)
       .header("Content-Disposition", `attachment; filename="${id}-config.conf"`)
-      .send(peers.get(id.config));
+      .send(peers.get(id).config);
   }
   return reply.status(404).send();
 });
