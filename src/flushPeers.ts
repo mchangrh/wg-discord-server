@@ -22,14 +22,15 @@ export const flushPeers = async (iface: string, configs: Map<string, any>) => {
   }
 
   for (const peer of peers) {
-    if (configs.has(peer) && configs.get(peer).expiry >= new Date().getTime()) continue;
-    const command = `wg set ${iface} peer ${peer} remove`;
-    await os.execCommand(command)
-      .catch((error) => {
-        console.error(error);
-      }
-    );
-    configs.delete(peer);
-    console.log("Flushed Peer: " + peer)
+    if (!configs.has(peer) || configs.get(peer).expiry >= new Date().getTime) {
+      const command = `wg set ${iface} peer ${peer} remove`;
+      await os.execCommand(command)
+        .catch((error) => {
+          console.error(error);
+        }
+      );
+      configs.delete(peer);
+      console.log("Flushed Peer: " + peer)
+    }
   }
 }
