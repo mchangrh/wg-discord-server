@@ -14,6 +14,12 @@ export const flushPeers = async (iface: string, configs: Map<string, any>) => {
       console.error(error);
     }
   );
+  // remove map entries not in wg interface
+  for (const peer of configs.keys()) {
+    if (peers.includes(peer)) continue;
+    configs.delete(peer);
+    console.log("Flushed Peer: " + peer)
+  }
 
   for (const peer of peers) {
     if (configs.has(peer) && configs.get(peer).expiry >= new Date().getTime()) continue;

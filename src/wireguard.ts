@@ -53,6 +53,18 @@ export async function routes(fastify, options) {
       reply.code(500).send({ error: error })
     });
   });
+  fastify.get("/:iface/revoke", async function (req, reply) {
+    const { iface } = req.params
+    const { pubkey } = req.body
+    const command = `wg set ${iface} peer ${pubkey} revoked`
+    return await os.execCommand(command)
+    .then((stdout) => {
+      reply.code(200).send({ message: "Peer deleted" })
+    })
+    .catch((error) => {
+      reply.code(500).send({ error: error })
+    });
+  });
   fastify.get("/:iface/ips", async function (req, reply) {
     const { iface } = req.params
     const command = `wg show ${iface} allowed-ips`
