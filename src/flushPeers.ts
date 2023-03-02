@@ -19,13 +19,11 @@ export const flushPeers = async (iface: string, configs: Map<string, any>) => {
     if (configs.has(peer) && configs.get(peer).expiry <= new Date().getTime()) continue;
     const command = `wg set ${iface} peer ${peer} remove`;
     await os.execCommand(command)
-      .then((stdout) => {
-        console.log("Peer removed");
-      })
       .catch((error) => {
         console.error(error);
       }
     );
+    configs.delete(peer);
+    console.log("Flushed Peer: " + peer)
   }
-
 }
